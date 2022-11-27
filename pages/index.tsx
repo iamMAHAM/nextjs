@@ -1,9 +1,16 @@
 import Layout from '../components/Layout';
+import Product from '../components/ProductCard';
+import { product } from '../types/product';
+import data from '../utils/data';
 
 export default function Home() {
   return (
     <Layout title="Home page">
-      <h2 className="flex text-3xl bg-red-600">Hello guys</h2>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
+        {data.products.map((product: product) => (
+          <Product product={product} key={product.slug} />
+        ))}
+      </div>
     </Layout>
   );
 }
