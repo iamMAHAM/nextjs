@@ -12,4 +12,5 @@ export declare interface product {
   numReviews: number;
   countInsStock: number;
   description: string;
+  [key: string]: number | string;
 }
