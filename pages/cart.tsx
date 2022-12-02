@@ -2,13 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useContext, useEffect, useState } from "react";
 import { product } from "../types/product";
-import { XCircleIcon } from "@heroicons/react/24/solid";
+import { XCircleIcon } from "@heroicons/react/24/outline";
 import Layout from "../components/Layout";
+import dynamic from "next/dynamic";
 
 import { useRouter } from "next/router";
 import { Store } from "../utils/store";
 
-export default function CartScreen() {
+function CartScreen() {
   const router = useRouter();
   const { state, dispatch } = useContext(Store);
 
@@ -16,6 +17,7 @@ export default function CartScreen() {
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
+    console.log("sstate", state.cart.cartItems);
     setCartAmount(
       state.cart.cartItems.reduce((a, b) => {
         return (a += typeof b.quantity === "number" ? b.quantity : 0);
@@ -24,7 +26,8 @@ export default function CartScreen() {
 
     setTotal(
       state.cart.cartItems.reduce((a, b) => {
-        return (a += typeof b.quantity === "number" ? b.quantity : 0) * b.price;
+        const q = typeof b.quantity === "number" ? b.quantity : 0;
+        return (a += q * b.price);
       }, 0)
     );
   }, [state]);
@@ -32,6 +35,14 @@ export default function CartScreen() {
   const removeItemHandler = (item: product) => {
     dispatch({ type: "CART_REMOVE_ITEM", payload: item });
   };
+
+  const updateQuantity = (product: product, quantity: number) => {
+    dispatch({
+      type: "CART_ADD_ITEM",
+      payload: { ...product, quantity: quantity },
+    });
+  };
+
   return (
     <Layout title="Shopping Cart">
       <h1 className="mb-4 text-xl">Shopping Cart</h1>
@@ -66,11 +77,32 @@ export default function CartScreen() {
                         {item.name}
                       </Link>
                     </td>
-                    <td className="p-5 text-right">{item.quantity}</td>
+                    <td className="p-5 text-right">
+                      <select
+                        name="selectquantity"
+                        defaultValue={item.quantity}
+                        onChange={(e) =>
+                          updateQuantity(item, Number(e.target.value))
+                        }
+                      >
+                        {[...Array(item.countInsStock).keys()]!.map(
+                          (number, index) => {
+                            return (
+                              <option key={index} value={number + 1}>
+                                {number + 1}
+                              </option>
+                            );
+                          }
+                        )}
+                      </select>
+                    </td>
                     <td className="p-5 text-right">${item.price}</td>
                     <td className="p-5 text-center">
                       <button onClick={() => removeItemHandler(item)}>
-                        <XCircleIcon className="h-5 w-5"></XCircleIcon>
+                        <XCircleIcon
+                          className="h-5 w-5"
+                          title="remove"
+                        ></XCircleIcon>
                       </button>
                     </td>
                   </tr>
@@ -100,3 +132,5 @@ export default function CartScreen() {
     </Layout>
   );
 }
+
+export default dynamic(() => Promise.resolve(CartScreen), { ssr: false });

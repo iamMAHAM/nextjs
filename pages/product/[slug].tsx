@@ -22,13 +22,15 @@ const ProductScreen = () => {
   const addToCart = () => {
     const exist = state.cart.cartItems.find((c) => c.slug === product.slug);
     const quantity =
-      exist && typeof exist.quantity === "number" ? (exist.quantity += 1) : 1;
-    if (product.countInsStock >= quantity)
-      dispatch({
-        type: "CART_ADD_ITEM",
-        payload: { ...product, quantity: quantity },
-      });
-    else alert("out of stock bro ");
+      exist && typeof exist.quantity === "number" ? exist.quantity + 1 : 1;
+    if (!(product.countInsStock >= quantity)) {
+      alert("out of stock");
+      return;
+    }
+    dispatch({
+      type: "CART_ADD_ITEM",
+      payload: { ...product, quantity: quantity },
+    });
   };
   return (
     <Layout title={product.name}>
