@@ -10,7 +10,6 @@ type action = {
 const cartItems = () => {
   const hasCart = Cookies.get("cart");
   const cartItems: Array<product> = hasCart ? JSON.parse(hasCart) : [];
-  console.log("cart", cartItems);
   return cartItems;
 };
 

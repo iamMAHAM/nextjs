@@ -17,7 +17,6 @@ function CartScreen() {
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    console.log("sstate", state.cart.cartItems);
     setCartAmount(
       state.cart.cartItems.reduce((a, b) => {
         return (a += typeof b.quantity === "number" ? b.quantity : 0);

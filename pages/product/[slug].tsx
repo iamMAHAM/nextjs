@@ -3,17 +3,13 @@ import Layout from "../../components/Layout";
 import data from "../../utils/data";
 import Link from "next/link";
 import Image from "next/image";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { Store } from "../../utils/store";
 
 const ProductScreen = () => {
   const { query } = useRouter();
   const { slug } = query;
   const { state, dispatch } = useContext(Store);
-
-  useEffect(() => {
-    console.log(state.cart.cartItems);
-  }, [state]);
 
   const product = data.products.find((p) => p.slug === slug);
 

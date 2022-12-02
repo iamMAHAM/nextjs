@@ -1,23 +1,9 @@
-import { Schema, model, Date } from "mongoose";
+import { Schema, model, models } from "mongoose";
 import validator from "validator";
 import { comparePassword, hash } from "../functions/hash";
+import { IUser, IUserMethods } from "../types/user.model";
 
-export interface iUser {
-  fullname: string;
-  username: string;
-  email: string;
-  password: string;
-  birthday: Date;
-  avatar: string;
-  emailVerified: boolean;
-}
-
-export interface iUserMethods {
-  // eslint-disable-next-line no-unused-vars
-  validatePassword(password: string): Promise<Boolean>;
-}
-
-const uSchema = new Schema<iUser, {}, iUserMethods>(
+const uSchema = new Schema<IUser, {}, IUserMethods>(
   {
     fullname: {
       type: String,
@@ -54,7 +40,7 @@ const uSchema = new Schema<iUser, {}, iUserMethods>(
       },
     },
     birthday: {
-      type: Date,
+      type: Schema.Types.Date,
       required: [true, "missing birthday date"],
       min: ["1900-01-01", "invalid date"],
       max: ["2005-12-31", "18 years minimum"],
@@ -69,6 +55,11 @@ const uSchema = new Schema<iUser, {}, iUserMethods>(
       required: false,
       default:
         "https://img2.freepng.fr/20180331/eow/kisspng-computer-icons-user-clip-art-user-5abf13db298934.2968784715224718991702.jpg",
+    },
+    role: {
+      type: [String],
+      required: true,
+      default: ["user"],
     },
   },
   {
@@ -89,8 +80,13 @@ uSchema.pre("save", async function (next: Function) {
 
 uSchema.methods.validatePassword = async function (
   password: string
-): Promise<Boolean> {
+): Promise<boolean> {
   return await comparePassword(password, this.password);
 };
 
-export default model("User", uSchema);
+uSchema.methods.hasRole = function (role: string) {
+  return this.role === role;
+};
+
+const User = models.User || model("User", uSchema);
+export default User;
