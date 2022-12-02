@@ -1,5 +1,5 @@
 /**
- * A Prodcut interface
+ * A Product interface
  */
 export declare interface product {
   name: string;
@@ -8,7 +8,7 @@ export declare interface product {
   image: string;
   price: number;
   brand: string;
-  rating: Number;
+  rating: number;
   numReviews: number;
   countInsStock: number;
   description: string;
