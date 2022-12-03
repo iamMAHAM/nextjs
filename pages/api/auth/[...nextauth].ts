@@ -3,10 +3,7 @@ import User from "../../../models/user.model";
 import db from "../../../utils/db";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-type user = {
-  email: string;
-  password: string;
-};
+
 export default NextAuth({
   session: {
     strategy: "jwt",
@@ -25,14 +22,16 @@ export default NextAuth({
         email: { label: "email", type: "text", placeholder: "jsmith" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, req) {
-        req;
+      async authorize(credentials): Promise<any> {
+        const pwd = credentials?.password
         await db.on();
         const user = await User.findOne({ email: credentials?.email });
         await db.off();
-        if (user && user.validatePassword(credentials?.password)) {
+        console.log(user)
+        if (user && pwd && await user.validatePassword(pwd)) {
           return user.toObject();
         }
+        throw new Error('bad credentials')
       },
     }),
   ],

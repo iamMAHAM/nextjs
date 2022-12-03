@@ -1,7 +1,8 @@
-import Link from "next/link";
-import React from "react";
-import { useForm } from "react-hook-form";
-import Layout from "../components/Layout";
+import Link from 'next/link';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import Layout from '../components/Layout';
+import { signIn } from 'next-auth/react';
 
 type formData = {
   email: string;
@@ -14,8 +15,17 @@ export default function LoginScreen() {
     register,
     formState: { errors },
   } = useForm<formData>();
-  const submitHandler = ({ email, password }: formData) => {
-    console.log(email, password);
+  const submitHandler = async ({ email, password }: formData) => {
+    try {
+      const res = await signIn('credentials', {
+        redirect: false,
+        email: email,
+        password: password,
+      });
+      console.log('res', res)
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -29,11 +39,11 @@ export default function LoginScreen() {
           <label htmlFor="email">Email</label>
           <input
             type="email"
-            {...register("email", {
-              required: "Please enter email",
+            {...register('email', {
+              required: 'Please enter email',
               pattern: {
                 value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$/i,
-                message: "Please enter valid email",
+                message: 'Please enter valid email',
               },
             })}
             className="w-full"
@@ -48,9 +58,9 @@ export default function LoginScreen() {
           <label htmlFor="password">Password</label>
           <input
             type="password"
-            {...register("password", {
-              required: "Please enter password",
-              minLength: { value: 6, message: "password is more than 5 chars" },
+            {...register('password', {
+              required: 'Please enter password',
+              minLength: { value: 6, message: 'password is more than 5 chars' },
             })}
             className="w-full"
             id="password"
