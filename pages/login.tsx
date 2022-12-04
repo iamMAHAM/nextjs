@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Layout from '../components/Layout';
 import { signIn } from 'next-auth/react';
@@ -8,6 +8,7 @@ type formData = {
   email: string;
   password: string;
 };
+
 
 export default function LoginScreen() {
   const {

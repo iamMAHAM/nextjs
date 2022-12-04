@@ -3,7 +3,7 @@ import data from "./data";
 
 const cleaner = async function () {
   await User.deleteMany();
-  await User.insertMany(data.users);
+  data.users.map(async u => await User.create(u))
 };
 
 export default cleaner;
